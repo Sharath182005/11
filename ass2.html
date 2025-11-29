@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Minimal Form</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				display: flex;
+				justify-content: center;
+				background: #f0f0f0;
+				margin: 0;
+				padding: 20px;
+			}
+			.c {
+				max-width: 450px;
+				width: 100%;
+				background: #fff;
+				padding: 25px;
+				border-radius: 8px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+			h2 {
+				color: #d00;
+				text-align: center;
+				margin-bottom: 20px;
+			}
+			label {
+				display: block;
+				margin-top: 10px;
+				font-weight: bold;
+			}
+			input,
+			select,
+			textarea {
+				width: calc(100% - 12px);
+				padding: 5px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				margin-top: 3px;
+			}
+			button {
+				width: 100%;
+				padding: 10px;
+				background: #e00;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				margin-top: 20px;
+				cursor: pointer;
+			}
+			button:hover {
+				background: #b00;
+			}
+			.error {
+				color: #d00;
+				font-weight: bold;
+				text-align: center;
+				margin-bottom: 15px;
+				display: none;
+			}
+			.data-view {
+				margin-top: 20px;
+				border: 1px solid #d00;
+				padding: 15px;
+				border-radius: 5px;
+			}
+			.data-view h3 {
+				color: #d00;
+				margin-top: 0;
+			}
+			.data-row {
+				border-bottom: 1px dotted #f0f0f0;
+				padding: 5px 0;
+			}
+			.data-row span {
+				font-weight: normal;
+				margin-left: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="c">
+			<div id="form-view">
+				<h2>Student Registration</h2>
+				<p class="error" id="msg"></p>
+				<form id="regForm">
+					<label>First Name*</label><input type="text" name="fname" required />
+					<label>Last Name</label><input type="text" name="lname" />
+					<label>Date of Birth*</label><input type="date" name="dob" required />
+					<label>Gender*</label>
+					<select name="gender" required>
+						<option value="">Select</option>
+						<option>Male</option>
+						<option>Female</option>
+						<option>Other</option>
+					</select>
+					<label>Phone No.*</label><input type="tel" name="phone" required />
+					<label>E-mail*</label><input type="email" name="email" required />
+					<label>Address*</label><textarea name="address" required></textarea>
+					<label>City*</label><input type="text" name="city" required />
+					<label>Pincode*</label><input type="text" name="pincode" required />
+					<label>Qualification*</label
+					><input type="text" name="qualification" required />
+					<label>Year of Passing*</label
+					><input
+						type="number"
+						name="year_of_passing"
+						min="1950"
+						max="2030"
+						required
+					/>
+					<button type="submit">Register & Display</button>
+				</form>
+			</div>
+			<div id="result-view" class="data-view" style="display: none">
+				<h3>Registration Complete!</h3>
+				<div id="data-output"></div>
+				<button onclick="window.location.reload()">New Registration</button>
+			</div>
+		</div>
+
+		<script>
+			const form = document.getElementById("regForm");
+			const msg = document.getElementById("msg");
+			const dataOutput = document.getElementById("data-output");
+			const labels = {
+				fname: "First Name",
+				lname: "Last Name",
+				dob: "DOB",
+				gender: "Gender",
+				phone: "Phone",
+				email: "Email",
+				address: "Address",
+				city: "City",
+				state: "State",
+				pincode: "Pincode",
+				qualification: "Qualification",
+				year_of_passing: "YOP",
+				country: "Country",
+			};
+
+			form.addEventListener("submit", function (e) {
+				e.preventDefault();
+				msg.style.display = "none";
+
+				const data = Object.fromEntries(new FormData(form).entries());
+				data.country = "India";
+				if (!/^\d{10,15}$/.test(data.phone.replace(/\s/g, ""))) {
+					msg.textContent = "Invalid phone number (10-15 digits).";
+					msg.style.display = "block";
+					return;
+				}
+				if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+					msg.textContent = "Invalid email format.";
+					msg.style.display = "block";
+					return;
+				}
+				dataOutput.innerHTML = "";
+				for (const key in data) {
+					if (key === "country" || key === "state") continue;
+					const label = labels[key] || key;
+					const div = document.createElement("div");
+					div.className = "data-row";
+					div.innerHTML = <strong>${label}:</strong> <span>${data[key]}</span>;
+					dataOutput.appendChild(div);
+				}
+
+				document.getElementById("form-view").style.display = "none";
+				document.getElementById("result-view").style.display = "block";
+			});
+		</script>
+	</body>
+</html>
